@@ -6,7 +6,7 @@ import { OBJLoader } from "three/examples/jsm/Addons.js";
 
 const Brain = () => {
   const brain = useLoader(OBJLoader, "/brain.obj");
-  return <primitive object={brain} />;
+  return <div>Brain</div>;
 };
 
 export default Brain;

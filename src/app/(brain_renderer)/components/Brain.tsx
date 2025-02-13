@@ -1,44 +1,47 @@
 // Brain.tsx
 "use client";
 
-import React, { useMemo, useEffect } from "react";
-import { useLoader, useThree } from "@react-three/fiber";
+import React, { useMemo, useRef } from "react";
+import { useLoader } from "@react-three/fiber";
 import { OBJLoader } from "three/examples/jsm/Addons.js";
-import { TextureLoader } from "three";
 import * as THREE from "three";
-import { BrainShaderMaterial } from "./BrainShaderMaterial";
 import { addBarycentrics } from "./addBarycentrics";
 
 const Brain: React.FC = () => {
-  // Load your brain model.
+  const brainRef = useRef<THREE.Object3D | null>(null);
+
+  // Load the brain model.
   const brain = useLoader(OBJLoader, "/brain.obj");
-  // Load your ASCII texture.
-  const asciiTexture = useLoader(TextureLoader, "/ascii_atlas.png");
 
-  // Set texture filters for a crisp terminal effect.
-  useEffect(() => {
-    asciiTexture.magFilter = THREE.NearestFilter;
-    asciiTexture.minFilter = THREE.NearestFilter;
-    BrainShaderMaterial.uniforms.asciiTexture.value = asciiTexture;
-    BrainShaderMaterial.uniforms.asciiCols.value = 16.0;
-    BrainShaderMaterial.uniforms.asciiRows.value = 16.0;
-    BrainShaderMaterial.uniforms.asciiTiling.value = 32.0; // Adjust for desired cell size.
-  }, [asciiTexture]);
-
-  // Update resolution uniform from the canvas size.
-  const { size } = useThree();
-  useEffect(() => {
-    BrainShaderMaterial.uniforms.resolution.value.set(size.width, size.height);
-  }, [size]);
-
-  // Add barycentrics and assign the shader material.
+  // Add barycentrics and assign a basic material for the first pass.
   useMemo(() => {
     addBarycentrics(brain);
     brain.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
-        (child as THREE.Mesh).material = BrainShaderMaterial;
+        // Create a wireframe geometry
+        const wireframeGeometry = new THREE.EdgesGeometry(child.geometry);
+        // Create a wireframe material
+        const wireframeMaterial = new THREE.LineBasicMaterial({
+          color: 0x000000, // Set the wireframe color
+          linewidth: 1,
+        });
+        // Create the wireframe mesh
+        const wireframe = new THREE.LineSegments(
+          wireframeGeometry,
+          wireframeMaterial,
+        );
+        // Add the wireframe as a child of the original mesh
+        child.add(wireframe);
+
+        // Assign a standard material for the shaded part
+        (child as THREE.Mesh).material = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          metalness: 0.5,
+          roughness: 0.5,
+        });
       }
     });
+    brainRef.current = brain;
   }, [brain]);
 
   return <primitive object={brain} />;

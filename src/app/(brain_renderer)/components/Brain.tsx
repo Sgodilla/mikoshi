@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useMemo, useEffect } from "react";
-import { useLoader } from "@react-three/fiber";
+import { useLoader, useThree } from "@react-three/fiber";
 import { OBJLoader } from "three/examples/jsm/Addons.js";
 import { TextureLoader } from "three";
 import * as THREE from "three";
@@ -10,29 +10,33 @@ import { BrainShaderMaterial } from "./BrainShaderMaterial";
 import { addBarycentrics } from "./addBarycentrics";
 
 const Brain: React.FC = () => {
-  // 1. Load your OBJ
+  // Load your brain model.
   const brain = useLoader(OBJLoader, "/brain.obj");
-
-  // 2. Load the ASCII atlas
+  // Load your ASCII texture.
   const asciiTexture = useLoader(TextureLoader, "/ascii_atlas.png");
 
-  // 3. Configure texture and set shader uniforms
+  // Set texture filters for a crisp terminal effect.
   useEffect(() => {
-    // For a pixelated, sharp look:
     asciiTexture.magFilter = THREE.NearestFilter;
     asciiTexture.minFilter = THREE.NearestFilter;
-
     BrainShaderMaterial.uniforms.asciiTexture.value = asciiTexture;
-    BrainShaderMaterial.uniforms.asciiCols.value = 16.0; // or your grid size
+    BrainShaderMaterial.uniforms.asciiCols.value = 16.0;
     BrainShaderMaterial.uniforms.asciiRows.value = 16.0;
+    BrainShaderMaterial.uniforms.asciiTiling.value = 32.0; // Adjust for desired cell size.
   }, [asciiTexture]);
 
-  // 4. Add barycentrics & apply the BrainShaderMaterial to each mesh
+  // Update resolution uniform from the canvas size.
+  const { size } = useThree();
+  useEffect(() => {
+    BrainShaderMaterial.uniforms.resolution.value.set(size.width, size.height);
+  }, [size]);
+
+  // Add barycentrics and assign the shader material.
   useMemo(() => {
     addBarycentrics(brain);
-    brain.traverse((child) => {
+    brain.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
-        child.material = BrainShaderMaterial;
+        (child as THREE.Mesh).material = BrainShaderMaterial;
       }
     });
   }, [brain]);

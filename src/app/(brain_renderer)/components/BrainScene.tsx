@@ -26,7 +26,8 @@ const BrainScene = () => {
     // Add the gradient shader pass
     const gradientPass = new ShaderPass(GradientShader);
     gradientPass.uniforms.color1.value = new THREE.Color("Black"); // Start color
-    gradientPass.uniforms.color2.value = new THREE.Color("#c40b0b"); // Second color
+    // gradientPass.uniforms.color2.value = new THREE.Color("#c40b0b"); // Second color
+    gradientPass.uniforms.color2.value = new THREE.Color("Blue"); // Second color
     gradientPass.uniforms.color3.value = new THREE.Color("Red"); // End color
     composer.addPass(gradientPass);
 
@@ -34,7 +35,19 @@ const BrainScene = () => {
   }, [gl, scene, camera, size]);
 
   useFrame(() => {
+    // First, render the brain standard material (layer 0) with the gradient shader
+    camera.layers.set(0);
     composer.render();
+
+    // Then, render the wireframe (layer 1) on top without post-processing.
+    camera.layers.set(1);
+    // Prevent clearing the previous render so the wireframe overlays the brain.
+    const prevAutoClear = gl.autoClear;
+    gl.autoClear = false;
+    // Clear the depth buffer so the wireframe is not occluded.
+    gl.clearDepth();
+    gl.render(scene, camera);
+    gl.autoClear = prevAutoClear;
   }, 1);
 
   return (

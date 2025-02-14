@@ -19,7 +19,6 @@ const GradientShader = {
     uniform vec3 color1;
     uniform vec3 color2;
     uniform vec3 color3;
-    uniform vec3 color4;
     varying vec2 vUv;
     void main() {
       vec4 texel = texture2D(tDiffuse, vUv);

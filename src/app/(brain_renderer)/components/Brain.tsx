@@ -15,6 +15,8 @@ const Brain: React.FC = () => {
   useMemo(() => {
     brain.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
+        // Assign the brain mesh to layer 0
+        child.layers.set(0);
         // Assign a standard material for the shaded part
         child.material = new THREE.MeshStandardMaterial({
           color: 0xffffff,
@@ -26,14 +28,15 @@ const Brain: React.FC = () => {
         const wireframeGeometry = new THREE.EdgesGeometry(child.geometry);
         // Create a wireframe material
         const wireframeMaterial = new THREE.LineBasicMaterial({
-          color: 0xffffff,
-          linewidth: 10,
+          color: "Red",
+          linewidth: 1,
         });
         // Create the wireframe mesh
         const wireframe = new THREE.LineSegments(
           wireframeGeometry,
           wireframeMaterial,
         );
+        wireframe.layers.set(1);
         wireframeRef.current = wireframe;
       }
     });
@@ -42,8 +45,8 @@ const Brain: React.FC = () => {
 
   return (
     <>
-      <primitive object={brain} />
-      {wireframeRef.current && <primitive object={wireframeRef.current} />}
+      {brainRef.current && <primitive object={brainRef.current} />}
+      {/* wireframeRef.current && <primitive object={wireframeRef.current} /> */}
     </>
   );
 };

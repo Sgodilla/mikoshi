@@ -26,8 +26,8 @@ const Brain: React.FC = () => {
         const wireframeGeometry = new THREE.EdgesGeometry(child.geometry);
         // Create a wireframe material
         const wireframeMaterial = new THREE.LineBasicMaterial({
-          color: "Black",
-          linewidth: 2,
+          color: 0xffffff,
+          linewidth: 10,
         });
         // Create the wireframe mesh
         const wireframe = new THREE.LineSegments(

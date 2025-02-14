@@ -26,7 +26,7 @@ const BrainScene = () => {
     // Add the gradient shader pass
     const gradientPass = new ShaderPass(GradientShader);
     gradientPass.uniforms.color1.value = new THREE.Color("Black"); // Start color
-    gradientPass.uniforms.color2.value = new THREE.Color("Blue"); // Second color
+    gradientPass.uniforms.color2.value = new THREE.Color("#c40b0b"); // Second color
     gradientPass.uniforms.color3.value = new THREE.Color("Red"); // End color
     composer.addPass(gradientPass);
 

@@ -22,14 +22,26 @@ const Brain: React.FC = () => {
           color: 0xffffff,
           metalness: 0.5,
           roughness: 0.5,
+          depthTest: true,
+          depthWrite: true,
+          side: THREE.FrontSide,
         });
 
         // Create a wireframe geometry
-        const wireframeGeometry = new THREE.EdgesGeometry(child.geometry);
+        const thresholdAngle = 20 * (Math.PI / 180);
+        const wireframeGeometry = new THREE.EdgesGeometry(
+          child.geometry,
+          thresholdAngle,
+        );
         // Create a wireframe material
         const wireframeMaterial = new THREE.LineBasicMaterial({
           color: "Red",
           linewidth: 1,
+          depthTest: true,
+          depthWrite: false,
+          polygonOffset: true,
+          polygonOffsetFactor: -10,
+          polygonOffsetUnits: 1,
         });
         // Create the wireframe mesh
         const wireframe = new THREE.LineSegments(
@@ -45,8 +57,8 @@ const Brain: React.FC = () => {
 
   return (
     <>
-      {brainRef.current && <primitive object={brainRef.current} />}
-      {/* wireframeRef.current && <primitive object={wireframeRef.current} /> */}
+      {/* brainRef.current && <primitive object={brainRef.current} /> */}
+      {wireframeRef.current && <primitive object={wireframeRef.current} />}
     </>
   );
 };

@@ -9,6 +9,7 @@ import { EffectComposer } from "three/examples/jsm/Addons.js";
 import { RenderPass } from "three/examples/jsm/Addons.js";
 import { ShaderPass } from "three/examples/jsm/Addons.js";
 import GradientShader from "./GradientShader";
+import BrainWireframe from "./BrainWireframe";
 
 const BrainScene = () => {
   const { gl, scene, camera, size } = useThree();
@@ -26,8 +27,8 @@ const BrainScene = () => {
     // Add the gradient shader pass
     const gradientPass = new ShaderPass(GradientShader);
     gradientPass.uniforms.color1.value = new THREE.Color("Black"); // Start color
-    // gradientPass.uniforms.color2.value = new THREE.Color("#c40b0b"); // Second color
-    gradientPass.uniforms.color2.value = new THREE.Color("Blue"); // Second color
+    gradientPass.uniforms.color2.value = new THREE.Color("#c40b0b"); // Second color
+    // gradientPass.uniforms.color2.value = new THREE.Color("Blue"); // Second color
     gradientPass.uniforms.color3.value = new THREE.Color("Red"); // End color
     composer.addPass(gradientPass);
 
@@ -37,17 +38,17 @@ const BrainScene = () => {
   useFrame(() => {
     // First, render the brain standard material (layer 0) with the gradient shader
     camera.layers.set(0);
-    composer.render();
+    gl.render(scene, camera);
+    // composer.render();
 
     // Then, render the wireframe (layer 1) on top without post-processing.
-    camera.layers.set(1);
-    // Prevent clearing the previous render so the wireframe overlays the brain.
-    const prevAutoClear = gl.autoClear;
-    gl.autoClear = false;
-    // Clear the depth buffer so the wireframe is not occluded.
-    gl.clearDepth();
-    gl.render(scene, camera);
-    gl.autoClear = prevAutoClear;
+    // camera.layers.set(1);
+    // const prevAutoClear = gl.autoClear;
+    // gl.autoClear = false;
+    //
+    // gl.clearDepth();
+    // gl.render(scene, camera);
+    // gl.autoClear = prevAutoClear;
   }, 1);
 
   return (
@@ -55,7 +56,8 @@ const BrainScene = () => {
       <ambientLight intensity={0.5} />
       <directionalLight position={[-5, 5, 5]} />
       <directionalLight position={[5, 5, -5]} />
-      <Brain />
+      {/* <Brain /> */}
+      <BrainWireframe />
       <OrbitControls />
     </>
   );

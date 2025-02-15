@@ -12,35 +12,15 @@ const BrainWireframe: React.FC = () => {
   useMemo(() => {
     brain.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
-        // Create a custom shader material
-        const material = new THREE.ShaderMaterial({
-          vertexShader: `
-            varying vec3 vNormal;
-            varying vec3 vPosition;
-            void main() {
-              vNormal = normalize(normalMatrix * normal);
-              vPosition = (modelViewMatrix * vec4(position, 1.0)).xyz;
-              gl_Position = projectionMatrix * vec4(vPosition, 1.0);
-            }
-          `,
-          fragmentShader: `
-            varying vec3 vNormal;
-            varying vec3 vPosition;
-            uniform vec3 cameraPosition;
-            void main() {
-              // Calculate the dot product between the normal and the view direction
-              float dotProduct = dot(vNormal, normalize(vPosition));
-              // Discard fragments facing away from the camera or occluded
-              if (dotProduct > 0.0) discard;
-              gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Red color for front-facing edges
-            }
-          `,
-          side: THREE.DoubleSide, // Ensure both sides are processed
-          wireframe: true, // Enable wireframe mode
+        // Create a wireframe material
+        const wireframeMaterial = new THREE.MeshBasicMaterial({
+          color: 0xff0000, // Red color for the wireframe
+          wireframe: true,
+          side: THREE.FrontSide, // Render only front-facing triangles
         });
 
-        // Apply the custom material to the mesh
-        child.material = material;
+        // Apply the wireframe material to the mesh
+        child.material = wireframeMaterial;
       }
     });
   }, [brain]);

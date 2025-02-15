@@ -14,12 +14,11 @@ const BrainWireframe: React.FC = () => {
       if (child instanceof THREE.Mesh) {
         // Create a wireframe material
         const wireframeMaterial = new THREE.MeshBasicMaterial({
-          color: 0xff0000, // Red color for the wireframe
+          color: "red",
           wireframe: true,
-          side: THREE.FrontSide, // Render only front-facing triangles
+          side: THREE.FrontSide,
         });
 
-        // Apply the wireframe material to the mesh
         child.material = wireframeMaterial;
       }
     });

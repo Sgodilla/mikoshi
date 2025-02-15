@@ -11,11 +11,13 @@ const BrainScene = () => {
 
   useFrame(() => {
     camera.layers.set(0);
+    gl.setClearColor("#000000", 1);
     gl.render(scene, camera);
   }, 1);
 
   return (
     <>
+      <color attach="background" args={["#000000"]} />
       <directionalLight position={[-5, 5, 5]} />
       <directionalLight position={[5, 5, -5]} />
       <BrainWireframe />

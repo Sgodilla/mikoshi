@@ -1,18 +1,13 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import Brain from "./Brain";
 import { OrbitControls } from "@react-three/drei";
-import * as THREE from "three";
-import { EffectComposer } from "three/examples/jsm/Addons.js";
-import { RenderPass } from "three/examples/jsm/Addons.js";
-import { ShaderPass } from "three/examples/jsm/Addons.js";
-import GradientShader from "./GradientShader";
 import BrainWireframe from "./BrainWireframe";
 
 const BrainScene = () => {
-  const { gl, scene, camera, size } = useThree();
+  const { gl, scene, camera } = useThree();
 
   useFrame(() => {
     camera.layers.set(0);
